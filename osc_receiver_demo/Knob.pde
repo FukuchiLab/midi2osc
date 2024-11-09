@@ -17,11 +17,6 @@ class Knob {
   Knob setValue(int value) {
     this.value = value;
 
-    OscMessage msg = new OscMessage("/knob");
-    msg.add(id);
-    msg.add(value);
-    osc.send(msg, target);
-
     return this;
   }
 

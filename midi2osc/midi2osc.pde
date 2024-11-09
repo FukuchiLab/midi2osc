@@ -25,28 +25,31 @@ int listening_port = 12000;
 
 // MIDI デバイス名。Windows では下記の通り。他の環境では変わるかもしれない。
 // コンソールに認識されたデバイス一覧が表示されているので参考にせよ。
-String device_name = "nanoKONTROL2";
+String device_name = "nanoKONTROL2 [hw:4,0,0]";
 
 OscP5 osc;
 NetAddress target;
 
 Slider[] sliders;
 Knob[] knobs;
+ButtonGroup[] bgroups;
 
 MidiBus midiBus;
 
 void setup() {
-  size(850, 500);
+  size(1000, 500);
 
   osc = new OscP5(this, listening_port);
   target = new NetAddress(target_host, target_port);
 
   sliders = new Slider[8];
   knobs = new Knob[8];
+  bgroups = new ButtonGroup[8];
 
   for (int i=0; i<8; i++) {
-    knobs[i] = new Knob(i, i * 100 + 80, 170, 50);
-    sliders[i] = new Slider(i, i * 100 + 60, 240, 40, 200);
+    knobs[i] = new Knob(i, i * 120 + 100, 170, 50);
+    sliders[i] = new Slider(i, i * 120 + 80, 240, 40, 200);
+    bgroups[i] = new ButtonGroup(i, i * 120 + 50, 260);
   }
 
   MidiBus.list();
@@ -62,6 +65,7 @@ void setup() {
   text("OSC address:", 10, 50);
   text("/knob ID VALUE", 20, 70);
   text("/slider ID VALUE", 20, 90);
+  text("/button LABEL ID 0or1", 20, 110);
 }
 
 void draw() {
@@ -72,6 +76,7 @@ void draw() {
   for (int i=0; i<8; i++) {
     sliders[i].draw();
     knobs[i].draw();
+    bgroups[i].draw();
   }
 }
 
@@ -80,10 +85,28 @@ void midiMessage(MidiMessage message) {
   int id = (int)msg[1];
   int val = (int)msg[2];
 
-  if (id >= 16 && id < 24) {
-    id = id - 16;
-    knobs[id].setValue(val);
-  } else if (id >= 0 && id < 8) {
-    sliders[id].setValue(val);
+  int type = (int)(id / 16);
+  int num = id % 16;
+
+  if (num < 8) {
+    switch(type) {
+    case 0:
+      sliders[num].setValue(val);
+      break;
+    case 1:
+      knobs[num].setValue(val);
+      break;
+    case 2:
+      bgroups[num].setStatus(2, val > 0);
+      break;
+    case 3:
+      bgroups[num].setStatus(1, val > 0);
+      break;
+    case 4:
+      bgroups[num].setStatus(0, val > 0);
+      break;
+    default:
+      break;
+    }
   }
 }

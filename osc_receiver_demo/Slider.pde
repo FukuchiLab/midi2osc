@@ -19,11 +19,6 @@ class Slider {
   Slider setValue(int value) {
     this.value = value;
 
-    OscMessage msg = new OscMessage("/slider");
-    msg.add(id);
-    msg.add(value);
-    osc.send(msg, target);
-
     return this;
   }
 
