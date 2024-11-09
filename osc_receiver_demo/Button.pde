@@ -1,12 +1,13 @@
 class Button {
   int id;
-  String label;
+  String name, label;
   int x, y; //中心座標
   int w, h;
   boolean status;
 
-  Button(int id, String label, int x, int y, int w, int h) {
+  Button(int id, String name, String label, int x, int y, int w, int h) {
     this.id = id;
+    this.name = name;
     this.label = label;
     this.x = x;
     this.y = y;
@@ -16,10 +17,12 @@ class Button {
     status = false;
   }
 
-  Button setStatus(boolean status) {
-    this.status = status;
+  Button(int id, String name, int x, int y, int w, int h) {
+    this(id, name, name, x, y, w, h);
+  }
 
-    return this;
+  void setStatus(boolean status) {
+    this.status = status;
   }
 
   void draw() {
@@ -39,7 +42,7 @@ class Button {
     fill(255);
     text(label, x, y);
     textAlign(RIGHT, TOP);
-    text(status ? 1 : 0, x + w / 2, y + h / 2);
+    text(status ? 1 : 0, x + w / 2, y + h / 2 + 5);
 
     popStyle();
   }

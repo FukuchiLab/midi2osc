@@ -12,8 +12,6 @@ import oscP5.*;
 
 import themidibus.*;
 import javax.sound.midi.MidiMessage;
-import javax.sound.midi.SysexMessage;
-import javax.sound.midi.ShortMessage;
 
 // 送信先アドレス
 String target_host = "127.0.0.1";
@@ -34,6 +32,7 @@ NetAddress target;
 Slider[] sliders;
 Knob[] knobs;
 ButtonGroup[] bgroups;
+TransportPanel transportPanel;
 
 MidiBus midiBus;
 
@@ -46,11 +45,12 @@ void setup() {
   sliders = new Slider[8];
   knobs = new Knob[8];
   bgroups = new ButtonGroup[8];
+  transportPanel = new TransportPanel(300, 75);
 
   for (int i=0; i<8; i++) {
-    knobs[i] = new Knob(i, i * 120 + 100, 170, 50);
-    sliders[i] = new Slider(i, i * 120 + 80, 240, 40, 200);
-    bgroups[i] = new ButtonGroup(i, i * 120 + 50, 260);
+    knobs[i] = new Knob(i, i * 120 + 100, 200, 50);
+    sliders[i] = new Slider(i, i * 120 + 80, 260, 40, 200);
+    bgroups[i] = new ButtonGroup(i, i * 120 + 50, 280);
   }
 
   String[] devices = MidiBus.availableInputs();
@@ -84,7 +84,7 @@ void setup() {
   text("OSC address:", 10, 50);
   text("/knob ID VALUE", 20, 70);
   text("/slider ID VALUE", 20, 90);
-  text("/button LABEL ID 0or1", 20, 110);
+  text("/button LABEL ID VALUE", 20, 110);
 }
 
 void draw() {
@@ -98,12 +98,14 @@ void draw() {
   noStroke();
   fill(0);
   rect(0, 140, width, height - 140);
+  rect(240, 0, width - 240, 140);
 
   for (int i=0; i<8; i++) {
     sliders[i].draw();
     knobs[i].draw();
     bgroups[i].draw();
   }
+  transportPanel.draw();
 }
 
 void midiMessage(MidiMessage message) {
@@ -113,6 +115,7 @@ void midiMessage(MidiMessage message) {
 
   int type = (int)(id / 16);
   int num = id % 16;
+  println(type, num, val);
 
   if (num < 8) {
     switch(type) {
@@ -133,6 +136,10 @@ void midiMessage(MidiMessage message) {
       break;
     default:
       break;
+    }
+  } else if (type == 2) {
+    if (num >= 9 && num < 14) {
+      transportPanel.setStatus(num, val > 0);
     }
   }
 }

@@ -16,15 +16,13 @@ class Slider {
     value = 0;
   }
 
-  Slider setValue(int value) {
+  void setValue(int value) {
     this.value = value;
 
     OscMessage msg = new OscMessage("/slider");
     msg.add(id);
     msg.add(value);
     osc.send(msg, target);
-
-    return this;
   }
 
   void draw() {

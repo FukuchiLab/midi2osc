@@ -14,15 +14,13 @@ class Knob {
     value = 0;
   }
 
-  Knob setValue(int value) {
+  void setValue(int value) {
     this.value = value;
 
     OscMessage msg = new OscMessage("/knob");
     msg.add(id);
     msg.add(value);
     osc.send(msg, target);
-
-    return this;
   }
 
   void draw() {
@@ -38,9 +36,9 @@ class Knob {
     arc(0, 0, r, r, HALF_PI, HALF_PI + vr);
 
     textSize(20);
-    textAlign(RIGHT);
+    textAlign(RIGHT, TOP);
     fill(255);
-    text(value, r / 2 - 10, r);
+    text(value, r / 2 - 10, r / 2 + 5);
 
     popMatrix();
     popStyle();

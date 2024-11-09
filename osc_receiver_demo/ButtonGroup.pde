@@ -13,21 +13,19 @@ class ButtonGroup {
     buttons[2] = new Button(id, "S", 0, 0, 30, 30);
   }
 
-  ButtonGroup setStatus(int num, boolean status) {
+  void setStatus(int num, boolean status) {
     if (num >= 0 && num < 3) {
       buttons[num].setStatus(status);
     }
-    return this;
   }
 
-  ButtonGroup setStatus(String label, boolean status) {
+  void setStatus(String label, boolean status) {
     for (Button button : buttons) {
       if (button.label.equals(label)) {
         button.setStatus(status);
         break;
       }
     }
-    return this;
   }
 
   void draw() {
