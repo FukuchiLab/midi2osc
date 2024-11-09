@@ -4,6 +4,8 @@
 //   /knob ID VALUE…IDは左から0〜7。VALUE は 0〜127 の整数
 // スライダー
 //   /slider ID VALUE…IDは左から0〜7。VALUE は 0〜127 の整数
+// ボタン
+//   /button LABEL ID VALUE…LABELはS/M/Rのいずれか。IDは左から0〜7。VALUE は 0 or 1
 
 import netP5.*;
 import oscP5.*;
@@ -23,9 +25,8 @@ int target_port = 8888;
 // midi2osc を複数立ち上げるときは、この番号を1ずつ変えていくとよい
 int listening_port = 12000;
 
-// MIDI デバイス名。Windows では下記の通り。他の環境では変わるかもしれない。
-// コンソールに認識されたデバイス一覧が表示されているので参考にせよ。
-String device_name = "nanoKONTROL2 [hw:4,0,0]";
+// MIDI デバイス名。ここで指定した文字列を含む、最初に見付かったものを使用する
+String device_pattern = "nanoKONTROL2";
 
 OscP5 osc;
 NetAddress target;
@@ -52,10 +53,28 @@ void setup() {
     bgroups[i] = new ButtonGroup(i, i * 120 + 50, 260);
   }
 
-  MidiBus.list();
-  midiBus = new MidiBus();
-  midiBus.registerParent(this);
-  midiBus.addInput(device_name);
+  String[] devices = MidiBus.availableInputs();
+  boolean found = false;
+  String device_name = "";
+  if (devices != null) {
+    println("Device matching...");
+    for (int i = 0; i < devices.length; i++) {
+      println(i + ": " + devices[i]);
+      if (devices[i].contains(device_pattern)) {
+        device_name = devices[i];
+        found = true;
+        println("This device has been matched.");
+        break;
+      }
+    }
+  }
+  if (!found) {
+    println("No device has been matched to \"" + device_pattern + "\".");
+  } else {
+    midiBus = new MidiBus();
+    midiBus.registerParent(this);
+    midiBus.addInput(device_name);
+  }
 
   background(0);
   textSize(20);
@@ -69,6 +88,13 @@ void setup() {
 }
 
 void draw() {
+  if (midiBus == null) {
+    background(128, 0, 0);
+    textSize(64);
+    textAlign(CENTER, CENTER);
+    text("No device found.", width / 2, height / 2);
+    return;
+  }
   noStroke();
   fill(0);
   rect(0, 140, width, height - 140);
