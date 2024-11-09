@@ -1,4 +1,17 @@
-現時点では、KORG nanoKONTROL2 の入力を OSC メッセージに変換して送信する Processing プログラム、
-およびその受信デモ。
+（現在の実装では）KORG nanoKONTROL2 の入力を OSC メッセージに変換して送信する [Processing](https://processing.org/) プログラム。
+またその受信デモ。
 
-* [midi2osc (Processing)](https://scrapbox.io/fukuchilab/midi2osc_(Processing))
+# 使用ライブラリ
+- MidiBus
+- oscP5
+
+# OSC アドレスおよびデータ
+- ノブ
+  - `/knob ID VALUE`: IDは左から0〜7。VALUE は 0〜127 の整数
+- スライダー
+  - `/slider ID VALUE`: IDは左から0〜7。VALUE は 0〜127 の整数
+- ボタン
+  - `/button LABEL ID VALUE`: LABELはS/M/Rのいずれか。IDは左から0〜7。VALUE は 0 or 1
+
+https://github.com/user-attachments/assets/8e80b27f-654f-4031-af89-b30344e66035
+  - 左上が midi2osc 本体、右下は osc\_receiver\_demo。
