@@ -5,6 +5,9 @@ on:
   release:
     types: [published]
   workflow_dispatch:
+  push:
+    branches:
+      - workflow-test
 jobs:
   build:
     runs-on: ubuntu-latest
