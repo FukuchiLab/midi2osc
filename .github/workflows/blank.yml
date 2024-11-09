@@ -1,10 +1,8 @@
 name: Create ZIP files
 
-# Controls when the workflow will run
 on:
   release:
     types: [published]
-  workflow_dispatch:
 
 jobs:
   build:
@@ -13,9 +11,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       - name: Create ZIP files
-        run: zip -r midi2osc-${{ github.ref_name }}.zip midi2osc
+        run: |
+          zip -r midi2osc-${{ github.ref_name }}.zip midi2osc
+          zip -r osc_receiver_demo-${{ github.ref_name }}.zip osc_receiver_demo
       - name: Upload ZIP
         uses: softprops/action-gh-release@v2
         with:
           files: |
             midi2osc-${{ github.ref_name }}.zip
+            osc_receiver_demo-${{ github.ref_name }}.zip
